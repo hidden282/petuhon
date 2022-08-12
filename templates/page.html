@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3>console</h3>
+<p style="overflow: scroll; height: 70vh" id="console"></p>
+<input id="input" type="text" style="width: 100%">
+<button onclick="onclic()">send</button>
+
+<script>
+var consoleObj = document.getElementById("console");
+var inputObj = document.getElementById("input");
+
+function send(value){
+    $.ajax({
+        method: 'POST',
+        data: {'text': value, csrfmiddlewaretoken: '{{ csrf_token }}'}, // получаяем данные формы
+        url: "/test1",
+        success: function (response) {
+
+        },
+        error: function (response) {
+
+            console.log(response.responseJSON.errors)
+        }
+    });
+}
+
+function dodos(){
+    $.ajax({
+            method: 'GET',
+            url: "/test1",
+            success: function (response) {
+                if (response.text == '') return;
+                render(response.text, 'host');
+            },
+            error: function (response) {
+                console.log(response.responseJSON.errors)
+            }
+        });
+}
+
+function onclic() {
+    render(inputObj.value, 'me');
+    send(inputObj.value);
+    inputObj.value = '';
+}
+
+function render(value, sender){
+    consoleObj.innerHTML += sender + ': ' + value + '<br>';
+}
+
+setInterval(dodos, 1000);
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</body>
+</html>
